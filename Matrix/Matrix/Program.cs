@@ -18,13 +18,13 @@
             for (int i = 1; i <= matrix.GetLength(0); i++) {                
                 do {
                     Console.Write($"Enter {order} values separated by space (line #{i}): ");
-                    values = Console.ReadLine().Split(" ");
+                    values = Console.ReadLine().Split(" ", StringSplitOptions.RemoveEmptyEntries);
                     
                     if (values.Any(x => x.Any(char.IsLetter)) || values.Any(x => x.Any(y => char.IsPunctuation(y) && y != '-')) || values.Any(x => x.Any(char.IsSymbol))) {
                         Console.WriteLine("Enter numbers only.");
                         continue;
                     }
-                    if (values.Any(x => x.Skip(1).All(char.IsDigit)) && values.Any(x => x.Any(char.IsDigit))) {
+                    if (values.Any(x => x[0] == '-' && (x.Length == 1 || !x.Skip(1).All(char.IsDigit)))) {
                         Console.WriteLine("Invalid number.");
                         continue;
                     }
@@ -32,7 +32,7 @@
                         Console.WriteLine($"You must enter {order} values.");         
                     }
 
-                } while (values.Length != order || values.Any(x => x.Any(char.IsLetter)) || values.Any(x => x.Any(y => char.IsPunctuation(y) && y != '-')) || values.Any(x => x.Any(char.IsSymbol)) || (values.Any(x => x.Skip(1).All(char.IsDigit)) && values.Any(x => x.Any(char.IsDigit))));
+                } while (values.Length != order || values.Any(x => x.Any(char.IsLetter)) || values.Any(x => x.Any(y => char.IsPunctuation(y) && y != '-')) || values.Any(x => x.Any(char.IsSymbol)) || values.Any(x => x[0] == '-' && (x.Length == 1 || !x.Skip(1).All(char.IsDigit))));
 
                 for (int j = 0; j < matrix.GetLength(1); j++) {
                     matrix[i - 1, j] = int.Parse(values[j]);
@@ -54,16 +54,12 @@
                     if (j == i) {
                         Console.Write($"{matrix[i,j]} ");
                     }
-                }
-            }
-
-            for(int i = 0; i < matrix.GetLength(0); i++) {
-                for(int j = 0; j < matrix.GetLength(1); j++) {
-                    if (matrix[i,j] < 0) {
+                    if (matrix[i, j] < 0) {
                         count++;
                     }
                 }
             }
+           
             Console.WriteLine();
             Console.Write($"Negative numbers: {count}");
         }
